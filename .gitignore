@@ -1,1 +1,5 @@
 build/
+index/
+*.DS_STORE
+*.idea
+*.iml
