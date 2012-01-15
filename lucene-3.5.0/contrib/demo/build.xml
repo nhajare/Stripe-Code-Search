@@ -32,6 +32,7 @@
   <path id="classpath">
 	 <pathelement path="${analyzers-common.jar}"/>
    <pathelement path="${lucene-core.jar}"/>
+   <pathelement path="${common.dir}/build/contrib/queries/lucene-queries-${version}.jar"/>
   </path>
 
   <target name="compile-core" depends="jar-analyzers-common,common.compile-core" />
