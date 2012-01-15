@@ -99,44 +99,33 @@ public class Neel {
       in = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
     }
     QueryParser parser = new QueryParser(Version.LUCENE_31, field, analyzer);
-    while (true) {
-      if (queries == null && queryString == null) {                        // prompt the user
-        System.out.println("Enter query: ");
-      }
-
-      String line = queryString != null ? queryString : in.readLine();
-
-      if (line == null || line.length() == -1) {
-        break;
-      }
-
-      line = line.trim();
-      if (line.length() == 0) {
-        break;
-      }
-
-      String regex = "hello.*class";
-      Term term = new Term("contents", line);
-      RegexQuery query = new RegexQuery(term);
-
-      //Query query = parser.parse(line);
-      System.out.println("Searching for: " + query.toString(field));
-            
-      if (repeat > 0) {                           // repeat & time as benchmark
-        Date start = new Date();
-        for (int i = 0; i < repeat; i++) {
-          searcher.search(query, null, 40000);
-        }
-        Date end = new Date();
-        System.out.println("Time: "+(end.getTime()-start.getTime())+"ms");
-      }
-
-      doPagingSearch(in, searcher, query, hitsPerPage, raw, queries == null && queryString == null);
-
-      if (queryString != null) {
-        break;
-      }
+    if (queries == null && queryString == null) {                        // prompt the user
+      System.out.println("Enter query: ");
     }
+
+    String line = queryString != null ? queryString : in.readLine();
+
+    line = line.trim();
+
+    String regex = "hello.*class";
+    Term term = new Term("contents", line);
+    RegexQuery query = new RegexQuery(term);
+
+    //Query query = parser.parse(line);
+    //System.out.println("Searching for: " + query.toString(field));
+            
+    if (repeat > 0) {                           // repeat & time as benchmark
+      Date start = new Date();
+      for (int i = 0; i < repeat; i++) {
+        searcher.search(query, null, 40000);
+      }
+      Date end = new Date();
+      System.out.println("Time: "+(end.getTime()-start.getTime())+"ms");
+    }
+
+    //doPagingSearch(in, searcher, query, hitsPerPage, raw, queries == null && queryString == null);
+    doPagingSearch(in, searcher, query, hitsPerPage, raw, false);
+
     searcher.close();
     reader.close();
   }
@@ -159,7 +148,7 @@ public class Neel {
     ScoreDoc[] hits = results.scoreDocs;
     
     int numTotalHits = results.totalHits;
-    System.out.println(numTotalHits + " matching file(s)");
+    //System.out.println(numTotalHits + " matching file(s)");
 
     int start = 0;
     int end = Math.min(numTotalHits, hitsPerPage);
@@ -208,13 +197,13 @@ public class Neel {
         while (true) {
           System.out.print("Press ");
           if (start - hitsPerPage >= 0) {
-            System.out.print("(p)revious page, ");  
+            System.out.print("(p)revious page, ");
           }
           if (start + hitsPerPage < numTotalHits) {
             System.out.print("(n)ext page, ");
           }
           System.out.println("(q)uit or enter number to jump to a page.");
-          
+
           String line = in.readLine();
           if (line.length() == 0 || line.charAt(0)=='q') {
             quit = true;
