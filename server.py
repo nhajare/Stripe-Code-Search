@@ -16,11 +16,12 @@ for x in range(len(file_names)):
 
 def tbgs(expression):
   matches = []
+  regex = re.compile(expression)
 
   def work(files):
     for f in files:
       name, contents = f
-      match = re.search(expression, contents)
+      match = regex.search(contents)
       if match:
         matches.append((name, match.group(0)))
         if len(matches) > 1000:
